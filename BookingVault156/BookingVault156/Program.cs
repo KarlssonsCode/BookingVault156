@@ -4,7 +4,15 @@
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello, World!");
+            //Methods.Running();
+            while (true)
+            {
+                Methods.ShowDwellers();
+                Methods.AddDweller();
+                Console.Clear();
+            }
+            //Methods.AddRoom();
+
         }
     }
 }

@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace BookingVault156.Models
 {
-    internal class BookingHistory
+    public class BookingHistory
     {
         public int Id { get; set; }
-        public DateOnly BookedDate { get; set; }
+        public DateTime BookedDate { get; set; }
         public int RoomId { get; set; }
         public int DwellerId { get; set; }
         public bool? MutationCheck { get; set; }

@@ -44,17 +44,43 @@ namespace BookingVault156
         internal static void DrawTimes()
         {
             using (var db = new BookingContext())
-            {
+            { 
                 Console.WriteLine($"Week: {Week}\n");
                 Console.WriteLine("\tMån\tTis\tOns\tTor\tFri\tSat\tSun");
                 foreach (var room in db.Rooms.ToList())
                 {
-                    Console.Write(room.Name);
-                    for (int day = 1; day < 8; day++)
+
+                    Console.Write(room.Name);                   
+                    for (int day = 1; day < 8; day++)                    
                     {
-                        //if()
-                        Console.Write($"\t {day}");
-                    }
+
+                        var bookedTimes = from b in db.Bookings
+                                           join r in db.Rooms on b.RoomId equals r.Id
+                                           where b.BookedWeek == Week
+                                           select new { BookedDay = b.BookedDay, RoomId = r.Id};
+                        bool alreadyBooked = false;
+                        foreach (var bookedDay in bookedTimes.Where(x => x.BookedDay == day))
+                        {
+                            if (bookedDay.RoomId != room.Id)
+                            {
+                            //    //Console.Write($"\t L");
+                                continue;
+                            }
+                            else if (bookedDay.RoomId == room.Id)
+                            {
+                                Console.Write("\t B");
+                                alreadyBooked = true;
+                                break;
+                            }                           
+
+                        }
+
+                        if (alreadyBooked == false)
+                        {
+                            Console.Write($"\t A");
+                        }
+
+                    }                  
                     Console.WriteLine();
 
                 }

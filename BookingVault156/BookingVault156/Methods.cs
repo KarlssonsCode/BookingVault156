@@ -202,20 +202,27 @@ namespace BookingVault156
                     NukaColaAmount = NukaColaAmount,
 
                 };
-
-
-                if (booking == db.Bookings.Where(x => x.RoomId == booking.RoomId && x.BookedWeek == booking.BookedWeek && booking.BookedDay == x.BookedDay).ToList().SingleOrDefault())
+                var bookedTimes = from b in db.Bookings
+                                  join r in db.Rooms on b.RoomId equals r.Id
+                                  where b.BookedWeek == Week
+                                  select new { BookedDay = b.BookedDay, RoomId = r.Id, BookedWeek = b.BookedWeek};
+                
+                foreach (var bookedTime in bookedTimes.Where(x => x.BookedDay == booking.BookedDay))
                 {
-                    Console.WriteLine("This time has already been booked");
-                    Console.ReadKey();
+                    if (bookedTime.RoomId == booking.RoomId)
+                    {
+                        Console.WriteLine("This time has already been booked");
+                        Console.ReadKey();
+                        break;
+                    }
+                    else
+                    {
+                        var bookings = db.Bookings;
+                        bookings.Add(booking);
+                        db.SaveChanges();
+                    }
                 }
-                else
-                {
-                    var bookings = db.Bookings;
-                    bookings.Add(booking);
-                    db.SaveChanges();
 
-                }
             }
 
 

@@ -15,7 +15,7 @@ namespace BookingVault156
     internal class Methods
     {
         static int Week = 1;
-        internal static void Running()
+        internal static void StartPage()
         {
             while (true)
             {
@@ -44,34 +44,38 @@ namespace BookingVault156
         internal static void DrawTimes()
         {
             using (var db = new BookingContext())
-            { 
+            {
                 Console.WriteLine($"Week: {Week}\n");
-                Console.WriteLine("\tMån\tTis\tOns\tTor\tFri\tSat\tSun");
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("\t\tMon\tTue\tWen\tThu\tFri\tSat\tSun");
+                Console.ResetColor();
                 foreach (var room in db.Rooms.ToList())
                 {
-
-                    Console.Write(room.Name);                   
-                    for (int day = 1; day < 8; day++)                    
+                    Console.ForegroundColor = ConsoleColor.Blue;
+                    Console.Write(room.Id + ". " + room.Name);
+                    Console.ResetColor();
+                    for (int day = 1; day < 8; day++)
                     {
 
                         var bookedTimes = from b in db.Bookings
-                                           join r in db.Rooms on b.RoomId equals r.Id
-                                           where b.BookedWeek == Week
-                                           select new { BookedDay = b.BookedDay, RoomId = r.Id};
+                                          join r in db.Rooms on b.RoomId equals r.Id
+                                          where b.BookedWeek == Week
+                                          select new { BookedDay = b.BookedDay, RoomId = r.Id };
                         bool alreadyBooked = false;
                         foreach (var bookedDay in bookedTimes.Where(x => x.BookedDay == day))
                         {
-                            if (bookedDay.RoomId != room.Id)
+                            //if (bookedDay.RoomId != room.Id)
+                            //{                           
+
+                            //}
+                            if (bookedDay.RoomId == room.Id)
                             {
-                            //    //Console.Write($"\t L");
-                                continue;
-                            }
-                            else if (bookedDay.RoomId == room.Id)
-                            {
+                                Console.ForegroundColor = ConsoleColor.Red;
                                 Console.Write("\t B");
+                                Console.ResetColor();
                                 alreadyBooked = true;
-                                break;
-                            }                           
+
+                            }
 
                         }
 
@@ -80,7 +84,7 @@ namespace BookingVault156
                             Console.Write($"\t A");
                         }
 
-                    }                  
+                    }
                     Console.WriteLine();
 
                 }
@@ -93,12 +97,13 @@ namespace BookingVault156
         }
         internal static void AdminMenu()
         {
-            Console.Clear();
-            Console.WriteLine("Admin menu");
-            Console.WriteLine("\n[1]. Add Dwellers\n[2]. Add Room\n");
-            ConsoleKeyInfo key = Console.ReadKey(true);
             bool running = true;
             while (running)
+            {
+                Console.Clear();
+                Console.WriteLine("Admin menu");
+                Console.WriteLine("\n[1]. Add Dwellers\n[2]. Add Room\n[3]. Statistics\n[4]. Back to startpage");
+                ConsoleKeyInfo key = Console.ReadKey(true);
                 switch (key.KeyChar)
                 {
                     case '1':
@@ -112,9 +117,16 @@ namespace BookingVault156
                     case '3':
                         Statistics();
                         break;
-
+                    case '4':
+                        running = false;
+                        break;
+                    default:
+                        Console.WriteLine("This is not an option, are you really an admin? Go back to work");
+                        Console.ReadKey();
+                        break;
 
                 }
+            }
 
 
         }
@@ -178,6 +190,8 @@ namespace BookingVault156
                 }
 
 
+
+
                 var booking = new BookingHistory
                 {
                     DwellerId = dwellerId,
@@ -188,6 +202,7 @@ namespace BookingVault156
                     NukaColaAmount = NukaColaAmount,
 
                 };
+
 
                 if (booking == db.Bookings.Where(x => x.RoomId == booking.RoomId && x.BookedWeek == booking.BookedWeek && booking.BookedDay == x.BookedDay).ToList().SingleOrDefault())
                 {
@@ -252,7 +267,7 @@ namespace BookingVault156
         }
         internal static void AddRoom()
         {
-            Console.WriteLine("We have managed to build a new room, what should we call it?");
+            Console.WriteLine("\nWe have managed to build a new room, what should we call it?");
             string roomName = Console.ReadLine();
 
             using (var db = new BookingContext())
@@ -316,6 +331,7 @@ namespace BookingVault156
                             break;
                         case '3':
                             running = false;
+                            StartPage();
                             break;
 
                         default:

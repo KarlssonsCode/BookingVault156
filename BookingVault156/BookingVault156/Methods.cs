@@ -206,21 +206,22 @@ namespace BookingVault156
                                   join r in db.Rooms on b.RoomId equals r.Id
                                   where b.BookedWeek == Week
                                   select new { BookedDay = b.BookedDay, RoomId = r.Id, BookedWeek = b.BookedWeek};
-                
+                bool bookedStatus = false;
                 foreach (var bookedTime in bookedTimes.Where(x => x.BookedDay == booking.BookedDay))
                 {
                     if (bookedTime.RoomId == booking.RoomId)
                     {
                         Console.WriteLine("This time has already been booked");
                         Console.ReadKey();
+                        bookedStatus = true;
                         break;
                     }
-                    else
-                    {
-                        var bookings = db.Bookings;
-                        bookings.Add(booking);
-                        db.SaveChanges();
-                    }
+                }
+                if (bookedStatus == false)
+                {
+                    var bookings = db.Bookings;
+                    bookings.Add(booking);
+                    db.SaveChanges();
                 }
 
             }

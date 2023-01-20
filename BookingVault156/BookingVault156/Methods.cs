@@ -141,9 +141,10 @@ namespace BookingVault156
 
                 Console.WriteLine("\nWhat week do you want to book?");
                 int week = Convert.ToInt32(Console.ReadLine());
+                Week = week;
 
 
-                Console.WriteLine("\nWhat day do you want to book?");
+                Console.WriteLine("\nWhat day do you want to book? Mon - 1  |  Tue - 2  |  Wed - 3  |  Thu - 4  |  Fri - 5  |  Sat - 6  |  Sun - 7  ");
                 int day = Convert.ToInt32(Console.ReadLine());
 
                 ShowRooms();
